@@ -39,7 +39,7 @@ conky.config = {
 }
 
 conky.text = [[
-${image $HOME/.config/conky/images/nasa_sun.jpg -p 0,44 -s 110x110}
+${image $HOME/.config/conky/images/nasa_sun.jpg -p 0,44 -s 130x120}
 ${color1}${font}${exec whoami} ${color1}${color}${hr}
 
 ${color}${goto 142}${font}OS:  ${color1}${exec cat /etc/os-release | grep '^NAME=' | cut -d'=' -f2 | tr -d '"'}

@@ -35,6 +35,7 @@
 
     - name: Make sure schema is compiled
       command: "glib-compile-schemas {{ ansible_user_dir }}/.local/share/gnome-shell/extensions/{{ gnome_extension_info.uuid }}/schemas/"
+      ignore_errors: true
 
     - name: Enable Gnome Shell extension - {{ gnome_extension_info.name }}
       shell: gnome-extensions enable {{ gnome_extension_info.uuid }}

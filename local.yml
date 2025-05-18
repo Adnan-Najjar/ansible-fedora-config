@@ -4,11 +4,12 @@
     - role: roles/luizgavalda.gnome_extensions
       vars:
         gnome_extension_ids:
-          - 3193
           - 19
           - 615
           - 1160
           - 3628
+          - 5416
+          - 779
 
   tasks:
     - name: Enable the Ghostty COPR repository
@@ -44,6 +45,8 @@
           - zsh-syntax-highlighting
           - tldr
           - trash-cli
+          - tesseract
+          - gnome-screenshot
           - flatpak
           - dnf5-plugin-automatic
           - go
@@ -101,7 +104,7 @@
     - name: Install Flatpak applications
       become: true
       command: flatpak install -y flathub {{ item }}
-      with_items:
+      loop:
         - com.mattjakeman.ExtensionManager
         - app.zen_browser.zen
         - org.onlyoffice.desktopeditors
@@ -140,15 +143,54 @@
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_gid }}"
         mode: '0755'
+    
+    - name: Ensure autostart files have the correct path
+      replace:
+        path: "{{ item }}"
+        regexp: "USERNAME"
+        replace: "{{ ansible_user_id }}"
+      loop:
+        - files/autostart/conky_info.desktop
+        - files/autostart/conky_time.desktop
 
-    - name: Setup git, zsh, tmux, neovim and ghostty configrations
+    - name: Check if Zen browser profile is created
+      become: false
+      stat:
+        path: "/home/{{ ansible_user_id }}/.var/app/app.zen_browser.zen/.zen"
+      register: zen_dir
+
+    - name: Create Zen browser default profile if not created
+      become: false
+      command: timeout 5 flatpak run app.zen_browser.zen --headless
+      ignore_errors: true
+      when: zen_dir.stat.exists == false
+
+    - name: Get Zen browser default profile path
+      become: false
+      find:
+        paths: "/home/{{ ansible_user_id }}/.var/app/app.zen_browser.zen/.zen"
+        pattern: "*release*"
+        file_type: "directory"
+        limit: 1
+      register: zen_profile
+      when: zen_dir.stat.exists == true
+
+    - name: Delete Zen browser places file
+      become: false
+      file: 
+        path: "{{ zen_profile.files[0].path }}/places.sqlite"
+        state: absent
+      when: zen_dir.stat.exists == true
+
+    - name: Setup zen-browser, git, zsh, tmux, neovim and ghostty configrations
       become: false
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_gid }}"
-      with_items:
+      loop:
+        - { src: 'files/zen-browser/', dest: "{{ zen_profile.files[0].path }}/" }
         - { src: 'files/gitconfig', dest: "/home/{{ ansible_user_id }}/.gitconfig" }
         - { src: 'files/zshrc', dest: "/home/{{ ansible_user_id }}/.zshrc" }
         - { src: 'files/tmux', dest: "/home/{{ ansible_user_id }}/.tmux.conf" }
