@@ -110,7 +110,7 @@
         - org.onlyoffice.desktopeditors
         - com.discordapp.Discord
 
-    - name: copy wallpaper file
+    - name: Copy wallpaper file
       become: true
       copy:
         src: files/wallpaper.png
