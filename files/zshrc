@@ -112,6 +112,9 @@ export MANPATH="/usr/share/man:/usr/local/share/man:$MANPATH"
 #
 # cows=(`cowsay -l | sed '1d' | grep -v "kiss"`)
 # cowsay -f ${cows[$((RANDOM % ${#cows[@]}))]} $(echo -e "`taocl`\n`tbosk`" | shuf -n1) | lolcat
+#
+clear
+fastfetch -c /usr/share/fastfetch/presets/examples/9.jsonc
 
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"

@@ -32,7 +32,6 @@
           - ghostty
           - starship
           - papirus-icon-theme
-          - conky
           - dconf
           - zsh
           - neovim
@@ -145,15 +144,6 @@
         group: "{{ ansible_user_gid }}"
         mode: '0755'
     
-    - name: Ensure autostart files have the correct path
-      replace:
-        path: "{{ item }}"
-        regexp: "USERNAME"
-        replace: "{{ ansible_user_id }}"
-      loop:
-        - files/autostart/conky_info.desktop
-        - files/autostart/conky_time.desktop
-
     - name: Check if Zen browser profile is created
       become: false
       stat:
@@ -197,7 +187,6 @@
         - { src: 'files/tmux', dest: "/home/{{ ansible_user_id }}/.tmux.conf" }
         - { src: 'files/nvim', dest: "/home/{{ ansible_user_id }}/.config/nvim/init.lua" }
         - { src: 'files/ghostty', dest: "/home/{{ ansible_user_id }}/.config/ghostty/config" }
-        - { src: 'files/conky', dest: "/home/{{ ansible_user_id }}/.config/" }
         - { src: 'files/autostart', dest: "/home/{{ ansible_user_id }}/.config/" }
 
     - name: Change default shell to Zsh
