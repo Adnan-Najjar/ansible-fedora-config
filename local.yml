@@ -105,6 +105,7 @@
       become: true
       command: flatpak install -y flathub {{ item }}
       loop:
+        - md.obsidian.Obsidian
         - com.mattjakeman.ExtensionManager
         - app.zen_browser.zen
         - org.onlyoffice.desktopeditors
