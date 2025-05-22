@@ -12,6 +12,13 @@
           - 779
 
   tasks:
+    - name: Make dnf faster
+      blockinfile:
+        path: /etc/dnf/dnf.conf
+        block: |
+          max_parallel_downloads=20
+          fastestmirror=True
+
     - name: Enable the Ghostty COPR repository
       become: true
       community.general.copr:
@@ -23,7 +30,7 @@
         name: atim/starship
         state: enabled
 
-    - name: install packages
+    - name: Install packages
       become: true
       package:
         name:
@@ -54,7 +61,7 @@
         state: latest
         allowerasing: true
 
-    - name: install htmlq and eza
+    - name: Install htmlq and eza
       community.general.cargo:
         state: latest
         name: 
@@ -187,7 +194,6 @@
         - { src: 'files/tmux', dest: "/home/{{ ansible_user_id }}/.tmux.conf" }
         - { src: 'files/nvim', dest: "/home/{{ ansible_user_id }}/.config/nvim/init.lua" }
         - { src: 'files/ghostty', dest: "/home/{{ ansible_user_id }}/.config/ghostty/config" }
-        - { src: 'files/autostart', dest: "/home/{{ ansible_user_id }}/.config/" }
 
     - name: Change default shell to Zsh
       become: true
