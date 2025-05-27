@@ -4,12 +4,14 @@
     - role: roles/luizgavalda.gnome_extensions
       vars:
         gnome_extension_ids:
-          - 19
-          - 615
-          - 1160
-          - 3628
-          - 5416
-          - 779
+          - 19 # User Themes
+          - 3193 # Blur My Shell
+          - 3628 # ArcMenu
+          - 517 # Caffeine
+          - 5416 # Wifi QR Code
+          - 615 # AppIndicator
+          - 779 # Clipboard Indicator
+          - 7855 # Dash in Panel
 
   tasks:
     - name: Make dnf faster
