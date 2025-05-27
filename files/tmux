@@ -1,5 +1,6 @@
-set-option -g default-terminal "tmux-256color"
-set-option -sa terminal-overrides ",xterm*:Tc"
+# True color settings
+set -g default-terminal "$TERM"
+set -ag terminal-overrides ",$TERM:Tc"
 
 set-option -g focus-events on
 
@@ -22,6 +23,8 @@ bind-key -r -T prefix       C-h            resize-pane -L
 bind-key -r -T prefix       C-l           resize-pane -R
 
 bind x kill-pane
+
+bind-key "e" display-popup -E -w 50% "$HOME/.local/bin/tmux-sessionizer.sh"
 
 set -g prefix ^S
 set -g base-index 1

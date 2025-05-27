@@ -15,6 +15,7 @@
 
   tasks:
     - name: Make dnf faster
+      become: true
       blockinfile:
         path: /etc/dnf/dnf.conf
         block: |
@@ -43,6 +44,7 @@
           - papirus-icon-theme
           - dconf
           - zsh
+          - fastfetch
           - neovim
           - ripgrep
           - bat
