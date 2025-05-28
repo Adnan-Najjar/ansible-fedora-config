@@ -173,7 +173,6 @@
         paths: "/home/{{ ansible_user_id }}/.var/app/app.zen_browser.zen/.zen"
         pattern: "*release*"
         file_type: "directory"
-        limit: 1
       register: zen_profile
       when: zen_dir.stat.exists == true
 
