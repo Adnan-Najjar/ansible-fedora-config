@@ -14,6 +14,11 @@
           - 7855 # Dash in Panel
 
   tasks:
+    - name: Check if dnf.conf exists
+      stat:
+        path: /etc/dnf/dnf.conf
+      register: dnf_conf
+
     - name: Make dnf faster
       become: true
       blockinfile:
@@ -21,6 +26,7 @@
         block: |
           max_parallel_downloads=20
           fastestmirror=True
+      when: dnf_conf.stat.exists
 
     - name: Enable the Ghostty COPR repository
       become: true
