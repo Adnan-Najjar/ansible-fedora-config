@@ -176,13 +176,6 @@
       register: zen_profile
       when: zen_dir.stat.exists == true
 
-    - name: Delete Zen browser places file
-      become: false
-      file: 
-        path: "{{ zen_profile.files[0].path }}/places.sqlite"
-        state: absent
-      when: zen_dir.stat.exists == true
-
     - name: Setup zen-browser, git, zsh, tmux, neovim and ghostty configrations
       become: false
       copy:
