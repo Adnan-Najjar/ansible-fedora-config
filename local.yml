@@ -185,6 +185,7 @@
         group: "{{ ansible_user_gid }}"
       loop:
         - { src: 'files/zen-browser/', dest: "{{ zen_profile.files[0].path }}/" }
+        - { src: 'files/bin', dest: "/home/{{ ansible_user_id }}/.local/" }
         - { src: 'files/gitconfig', dest: "/home/{{ ansible_user_id }}/.gitconfig" }
         - { src: 'files/zshrc', dest: "/home/{{ ansible_user_id }}/.zshrc" }
         - { src: 'files/tmux', dest: "/home/{{ ansible_user_id }}/.tmux.conf" }
