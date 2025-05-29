@@ -65,6 +65,7 @@
           - gnome-screenshot
           - flatpak
           - dnf5-plugin-automatic
+          - chafa
           - go
           - rust
           - cargo
@@ -125,7 +126,6 @@
         - com.mattjakeman.ExtensionManager
         - app.zen_browser.zen
         - org.onlyoffice.desktopeditors
-        - com.discordapp.Discord
 
     - name: Copy wallpaper file
       become: true
@@ -210,6 +210,46 @@
         repo: https://github.com/EliverLara/Sweet
         dest: /usr/share/themes/Sweet
         version: "Ambar-Blue-Dark"
+
+    - name: Remove existing GTK 4 CSS files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ ansible_env.HOME }}/.config/gtk-4.0/gtk.css"
+        - "{{ ansible_env.HOME }}/.config/gtk-4.0/gtk-dark.css"
+        - "{{ ansible_env.HOME }}/.config/gtk-4.0/assets"
+
+    - name: Remove existing GTK 3 CSS files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ ansible_env.HOME }}/.config/gtk-3.0/gtk.css"
+        - "{{ ansible_env.HOME }}/.config/gtk-3.0/gtk-dark.css"
+        - "{{ ansible_env.HOME }}/.config/gtk-3.0/assets"
+
+    - name: Create symbolic links for GTK 4 CSS files
+      file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+        force: true
+        ignore_errors: true
+      loop:
+        - { src: "/usr/share/themes/Sweet/gtk-4.0/gtk.css", dest: "{{ ansible_env.HOME }}/.config/gtk-4.0/gtk.css" }
+        - { src: "/usr/share/themes/Sweet/gtk-4.0/gtk-dark.css", dest: "{{ ansible_env.HOME }}/.config/gtk-4.0/gtk-dark.css" }
+        - { src: "/usr/share/themes/Sweet/gtk-4.0/assets", dest: "{{ ansible_env.HOME }}/.config/gtk-4.0/assets" }
+
+    - name: Create symbolic links for GTK 3 CSS files
+      file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+      loop:
+        - { src: "/usr/share/themes/Sweet/gtk-3.0/gtk.css", dest: "{{ ansible_env.HOME }}/.config/gtk-3.0/gtk.css" }
+        - { src: "/usr/share/themes/Sweet/gtk-3.0/gtk-dark.css", dest: "{{ ansible_env.HOME }}/.config/gtk-3.0/gtk-dark.css" }
+        - { src: "/usr/share/themes/Sweet/assets", dest: "{{ ansible_env.HOME }}/.config/gtk-3.0/assets" }
 
     - name: Reload dconf Config
       become: true
