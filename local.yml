@@ -5,6 +5,7 @@
       vars:
         gnome_extension_ids:
           - 19 # User Themes
+          - 6997 # Athan Times
           - 3193 # Blur My Shell
           - 3628 # ArcMenu
           - 517 # Caffeine
@@ -28,11 +29,6 @@
           fastestmirror=True
       when: dnf_conf.stat.exists
 
-    - name: Enable the Ghostty COPR repository
-      become: true
-      community.general.copr:
-        name: pgdev/ghostty
-        state: enabled
     - name: Enable the Starship COPR repository
       become: true
       community.general.copr:
@@ -45,7 +41,6 @@
         name:
           - htop
           - gnome-tweaks
-          - ghostty
           - starship
           - papirus-icon-theme
           - dconf
@@ -109,7 +104,6 @@
           - gnome-user-docs
           - gnome-tour
           - libreoffice*
-          - ptyxis
           - unoconv
         autoremove: true
         state: absent
@@ -152,15 +146,6 @@
         group: "{{ ansible_user_gid }}"
         mode: '0755'
 
-    - name: Ensure Ghostty config directory exists
-      become: false
-      file:
-        path: "/home/{{ ansible_user_id }}/.config/ghostty"
-        state: directory
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_gid }}"
-        mode: '0755'
-    
     - name: Check if Zen browser profile is created
       become: false
       stat:
@@ -182,7 +167,7 @@
       register: zen_profile
       when: zen_dir.stat.exists == true
 
-    - name: Setup zen-browser, git, zsh, tmux, neovim and ghostty configrations
+    - name: Setup zen-browser, git, zsh, tmux and neovim configrations
       become: false
       copy:
         src: "{{ item.src }}"
@@ -196,7 +181,6 @@
         - { src: 'files/zshrc', dest: "/home/{{ ansible_user_id }}/.zshrc" }
         - { src: 'files/tmux', dest: "/home/{{ ansible_user_id }}/.tmux.conf" }
         - { src: 'files/nvim', dest: "/home/{{ ansible_user_id }}/.config/nvim/init.lua" }
-        - { src: 'files/ghostty', dest: "/home/{{ ansible_user_id }}/.config/ghostty/config" }
 
     - name: Change default shell to Zsh
       become: true
