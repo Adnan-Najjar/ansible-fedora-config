@@ -13,12 +13,12 @@ WORDCHARS=${WORDCHARS//\/} # Don't consider certain characters part of the word
 # configure key keybindings
 bindkey -e                                        # emacs key bindings
 bindkey ' ' magic-space                           # do history expansion on space
-bindkey '^U' backward-kill-line                   # ctrl + U
-bindkey '^[[3;5~' kill-word                       # ctrl + Supr
-bindkey '^[[3~' delete-char                       # delete
 bindkey '^[[1;5C' forward-word                    # ctrl + ->
 bindkey '^[[1;5D' backward-word                   # ctrl + <-
-bindkey '^ ' autosuggest-accept
+bindkey '^X' edit-command-line                    # ctrl + x to open in editor
+# Override -h and --help with bat
+alias -g -- -h='-h 2>&1 | bat --language=help --style=plain'
+alias -g -- --help='--help 2>&1 | bat --language=help --style=plain'
 
 # History configurations
 HISTFILE="$comppath/.zsh_history"
@@ -28,7 +28,12 @@ setopt hist_expire_dups_first # delete duplicates first when HISTFILE size excee
 setopt hist_ignore_dups       # ignore duplicated commands history list
 setopt share_history         # share command history data
 
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# Dont open tmux in tty or ssh
+if [[ $(tty) == *"pts"* ]]; then
+	if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
+		tmux attach -t main &> /dev/null || tmux new -s main &> /dev/null 
+	fi
+fi
 
 #######################################################
 # GENERAL ALIAS'S
@@ -37,21 +42,22 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # Set the default editor
 export EDITOR=nvim
 export VISUAL=nvim
-alias vi='nvim'
+alias vi="nvim"
 alias vim="nvim"
-alias svi='sudo nvim'
+alias svi="sudo nvim"
 
 alias grep='rg'
 unset GREP_OPTIONS
 
 # Alias's to modified commands
 alias ip="ip -c"
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='trash -v'
-alias mkdir='mkdir -p'
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="trash -v"
+alias mkdir="mkdir -p"
 alias pst="wl-paste"
 alias cpy="wl-copy"
+alias urls="grep -oP -N --color=never 'http[s]?://\\S+'"
 
 # cd into the old directory
 alias ...='cd "$OLDPWD"'
@@ -61,23 +67,7 @@ alias ..="cd .."
 alias ls="eza --icons"
 alias la="eza -a --icons"
 alias ll="eza -l --icons --total-size"
-alias lt="eza --icons --tree -I .git"
-
-catter() {
-    if [[ $(file "$1") = *"image"* ]]; then
-	chafa "$1"
-    else
-	bat "$1"
-    fi
-}
-
-alias cat="catter"
-
-man() { 
-    if ! /usr/bin/man $1; then 
-        goman $1 | less -R; 
-    fi; 
-}
+alias lt="eza --icons --tree -I .git --group-directories-first"
 
 len() {
     echo ${#1}
@@ -88,42 +78,12 @@ ppt2txt() {
     grep -oP '(?<=\<a:t\>).*?(?=\</a:t\>)'
 }
 
-# Dont open tmux in tty or ssh
-if [[ $(tty) == *"pts"* ]]; then
-	if command -v tmux &> /dev/null && [ -z "$TMUX" ]; then
-		tmux attach -t main &> /dev/null || tmux new -s main &> /dev/null 
-	fi
-fi
-
 export PATH="$PATH:$HOME/go/bin:$HOME/.local/bin:$HOME/.cargo/bin"
 export MANPATH="/usr/share/man:/usr/local/share/man:$MANPATH"
+export MANPAGER="sh -c 'awk '\''{ gsub(/\x1B\[[0-9;]*m/, \"\", \$0); gsub(/.\x08/, \"\", \$0); print }'\'' | bat -p -lman'"
+export BAT_THEME="TwoDark"
 
-#########################################
-# Daily random knowledge		#
-# But it makes the terminal slower	#
-#########################################
-# # The Art of Command Line
-# taocl() {
-#   curl -s https://raw.githubusercontent.com/jlevy/the-art-of-command-line/master/README.md |
-#   grep -v 'cowsay.png' |
-#   awk '/^ *- / {print substr($0, 3)}' |
-#   sed 's/[\[\]]/ /g' |
-#   shuf -n 1
-# }
-#
-# # The Book of Secret Knowledge
-# tbosk() {
-#   curl -s https://raw.githubusercontent.com/trimstray/the-book-of-secret-knowledge/refs/heads/master/README.md |
-#   grep "&nbsp;&nbsp;" |
-#   sed -E 's/.*<a href="([^"]+)">.*<\/a> - (.*)<br>.*/\2 (\1)/g' |
-#   shuf -n 1
-# }
-#
-# cows=(`cowsay -l | sed '1d' | grep -v "kiss"`)
-# cowsay -f ${cows[$((RANDOM % ${#cows[@]}))]} $(echo -e "`taocl`\n`tbosk`" | shuf -n1) | lolcat
-#
-clear
-fastfetch -c /usr/share/fastfetch/presets/examples/9.jsonc
+clear; fastfetch -c examples/9.jsonc
 
 source <(fzf --zsh)
 eval "$(zoxide init zsh)"

@@ -60,10 +60,10 @@
           - gnome-screenshot
           - flatpak
           - dnf5-plugin-automatic
-          - chafa
           - go
           - rust
           - cargo
+          - virt-manager
         state: latest
         allowerasing: true
 
@@ -101,6 +101,7 @@
           - gnome-shell-extension-common
           - gnome-shell-extension-launch-new-instance
           - gnome-shell-extension-places-menu
+          - gnome-boxes
           - gnome-user-docs
           - gnome-tour
           - libreoffice*

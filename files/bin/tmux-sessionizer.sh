@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # replace a set dirs to zoxide
 selected=$(zoxide query -i)
@@ -11,7 +11,7 @@ if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
     exit 0
 fi
 
-if ! tmux has-session -t=$selected_name 2> /dev/null; then
+if ! tmux has-session -t=$selected_name 2>/dev/null; then
     tmux new-session -ds $selected_name -c $selected
 fi
 
