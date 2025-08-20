@@ -16,7 +16,7 @@ This is my configurations for my Fedora 42 machine using the `ansible-pull` comm
 - **Uninstall applications** installed by Fedora 42 that I don't use.
 - **Install GNOME extensions** and apply GNOME settings using `dconf`.
 - **Copy over** wallpaper and config files for programs I use (e.g., `zsh`, `nvim`, etc...).
-- **Set up Zen Browser** (extensions, settings, and tabs).
+- **Set up Zen Browser** (extensions and settings).
 
 > So, running this will change your system, so **don't use it on your own machine!**
 
@@ -27,5 +27,5 @@ or
 
 Use this:
 ```bash
-ansible-pull -KU https://github.com/adnan-najjar/ansible_personal_config
+ansible-pull -KU https://github.com/adnan-najjar/ansible-fedora-config
 ```

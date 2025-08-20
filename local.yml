@@ -149,15 +149,35 @@
 
     - name: Check if Zen browser profile is created
       become: false
-      stat:
-        path: "/home/{{ ansible_user_id }}/.var/app/app.zen_browser.zen/.zen"
+      find:
+        paths: "/home/{{ ansible_user_id }}/.var/app/app.zen_browser.zen/.zen"
+        pattern: "*release*"
+        file_type: "directory"
       register: zen_dir
 
     - name: Create Zen browser default profile if not created
       become: false
-      command: timeout 5 flatpak run app.zen_browser.zen --headless
+      command: flatpak run app.zen_browser.zen
+      async: 20
+      poll: 0
       ignore_errors: true
-      when: zen_dir.stat.exists == false
+      changed_when: false
+      when: zen_dir.matched == 0
+      register: zen_run_job
+
+    - name: Wait for Zen to start and profile to be created
+      become: false
+      wait_for:
+        path: "/home/{{ ansible_user_id }}/.var/app/app.zen_browser.zen/.zen"
+        state: present
+        timeout: 15
+      when: zen_dir.matched == 0
+
+    - name: Kill Zen if it was started by us
+      become: false
+      shell: flatpak kill app.zen_browser.zen
+      changed_when: false
+      when: zen_dir.matched == 0
 
     - name: Get Zen browser default profile path
       become: false
@@ -166,7 +186,6 @@
         pattern: "*release*"
         file_type: "directory"
       register: zen_profile
-      when: zen_dir.stat.exists == true
 
     - name: Setup zen-browser, git, zsh, tmux and neovim configrations
       become: false
